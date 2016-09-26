@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+    }
+}
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+sourceCompatibility=1.8
+targetCompatibility=1.8
+// In this section you declare where to find the dependencies of your project
+repositories {
+    jcenter()
+}
+
+  dependencies {
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'org.springframework.boot:spring-boot-starter-security'
+	compile("org.springframework:spring-jdbc")
+	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    testCompile 'junit:junit:4.12'
+}
