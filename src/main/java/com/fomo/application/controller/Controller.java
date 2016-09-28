@@ -5,11 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fomo.application.entity.User;
+import com.fomo.application.repository.UserRepository;
+import com.fomo.application.security.SecurityUtils;
+
 @RestController
 public class Controller {
+	
+	@Autowired
+	private UserRepository userRepo;
+	
 	@RequestMapping("/")
 	public String index() {
 		return "Greetings from Spring Boot!";
@@ -27,4 +36,11 @@ public class Controller {
 	public Principal user(Principal user) {
 		return user;
 	}
+
+	@RequestMapping("/security/account")
+	User getUserAccount() {
+		User user = userRepo.findByLogin(SecurityUtils.getCurrentLogin());
+		return user;
+	}
+	
 }

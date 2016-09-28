@@ -1,68 +1,61 @@
-angular.module('hello', [ 'ngRoute' ])
-  .config(function($routeProvider, $httpProvider) {
+angular
+	.module('hello', [ 'ngRoute' ])
+		.config(
+				function($routeProvider, $httpProvider) {
 
-    $routeProvider.when('/', {
-      templateUrl : 'views/home.html',
-      controller : 'home',
-      controllerAs: 'controller'
-    }).when('/login', {
-      templateUrl : 'views/login.html',
-      controller : 'navigation',
-      controllerAs: 'controller'
-    }).otherwise('/');
-
-    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-
-  })
-  .controller('home', function($http) {
-    var self = this;
-    $http.get('/resource/').then(function(response) {
-      self.greeting = response.data;
-    })
-  })
-  .controller('navigation',
-
-  function($rootScope, $http, $location) {
-
-  var self = this
-
-  var authenticate = function(credentials, callback) {
-
-    var headers = credentials ? {authorization : "Basic "
-        + btoa(credentials.username + ":" + credentials.password)
-    } : {};
-
-    $http.get('user', {headers : headers}).then(function(response) {
-      if (response.data.name) {
-        $rootScope.authenticated = true;
-      } else {
-        $rootScope.authenticated = false;
-      }
-      callback && callback();
-    }, function() {
-      $rootScope.authenticated = false;
-      callback && callback();
-    });
-
-  }
-
-  authenticate();
-  self.credentials = {};
-  self.login = function() {
-      authenticate(self.credentials, function() {
-        if ($rootScope.authenticated) {
-          $location.path("/");
-          self.error = false;
-        } else {
-          $location.path("/login");
-          self.error = true;
-        }
-      });
-  };
-  self.logout = function() {
-	  $http.post('logout', {}).finally(function() {
-		    $rootScope.authenticated = false;
-		    $location.path("/");
-		  });};
-  
-});
+					$routeProvider.when('/', {
+						templateUrl : 'views/home.html',
+						controller : 'home',
+						controllerAs : 'controller',
+						access:{
+							loginRequired: true,
+				            authorizedRoles: [USER_ROLES.all]
+						}
+					}).when('/login', {
+						templateUrl : 'views/login.html',
+						controller : 'LoginController',
+						controllerAs : 'controller'
+					}).otherwise({
+						redirectTo : '/error/404'
+					});
+					$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+				}).run(function($rootScope, AuthSharedService, USER_ROLES){
+					$rootScope.$on('$routeChangeStart',function(event,next){
+						if(next.originalPath=="/login" && $rootScope.authenticated){
+							event.preventDefault();
+						}else if(next.access && next.access.loginRequired && !$rootScope.authenticated){
+							event.preventDefault();
+							$rootScope.$broadcast("event:auth-loginRequired", {});
+						}else if(next.access && !AuthSharedService.isAuthorized(next.access.authorizedRoles)){
+							event.preventDefault();
+							$rootScope.$broadcast("event:auth-forbidden", {});
+						}
+					});
+					
+					$rootScope.$on('event:auth-loginConfirmed',function(event,data){
+						$rootScope.loadingAccount=false;
+						var nextLocation = ($rootScope.requestedUrl? $rootScope.requestedUrl:'/home');
+						var delay = ($location.path() === "/loading"? 1500:0);
+						
+						$timeout(function(){
+							Session.loginUser(data);
+							$rootScope.account= Session;
+							$rootScope.authenticated = true;
+							$localtion.path(nextLocation).replace();
+						},delay);
+					});
+					$rootScope.$on('event:auth-loginRequired',function(event, data){
+						if($rootScope.loadingAccount && data.status !== 401){
+							$rootScope.requestedUrl = $location.path();
+							$location.path('/loading');
+						}else{
+							Session.invalidate();
+							$rootScope.authenticated = false;
+							$rootScope.loadingAccount = false;
+							$location.path('/login');
+						}
+					});
+					
+					AuthSharedService.getAccount();
+				})
+		

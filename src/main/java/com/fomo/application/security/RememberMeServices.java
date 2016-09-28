@@ -1,12 +1,21 @@
 package com.fomo.application.security;
 
 
+import static com.fomo.application.security.SecurityConfiguration.REMEMBER_ME_KEY;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Base64;
@@ -17,12 +26,10 @@ import org.springframework.security.web.authentication.rememberme.RememberMeAuth
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Date;
- 
+import com.fomo.application.entity.Token;
+import com.fomo.application.entity.User;
+import com.fomo.application.repository.TokenRepository;
+import com.fomo.application.repository.UserRepository; 
 /**
  * Custom implementation of Spring Security's RememberMeServices.
  * <p/>
@@ -55,11 +62,11 @@ public class RememberMeServices extends
     private SecureRandom random;
 
     @Autowired
-    private TokenRepo tokenRepo;
-
+    private TokenRepository tokenRepo;
+    
     @Autowired
-    private JdbcTemplate jdbc;
-
+    private UserRepository userRepo;
+ 
     @Autowired
     public RememberMeServices(Environment env, org.springframework.security.core.userdetails.UserDetailsService userDetailsService) {
         super(REMEMBER_ME_KEY, userDetailsService);
@@ -98,7 +105,7 @@ public class RememberMeServices extends
         User user = userRepo.findByLogin(login);
         Token token = new Token();
         token.setSeries(generateSeriesData());
-        token.setUserLogin(user.getLogin());
+        token.setUserLogin(user.getEmail());
         token.setValue(generateTokenData());
         token.setDate(new Date());
         token.setIpAddress(request.getRemoteAddr());

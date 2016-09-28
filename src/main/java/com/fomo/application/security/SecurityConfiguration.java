@@ -20,6 +20,9 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	public static final String REMEMBER_ME_KEY = "rememberme_key";
+	
+	
 	@Autowired
 	DataSource dataSource;
 	@Autowired
@@ -28,7 +31,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	private SimpleUrlAuthenticationFailureHandler authenticationFailureHandler;
 	@Autowired
 	private RestAuthenticationSuccessHandler authenticationSuccessHandler;
-	
+	@Autowired
+	private RememberMeServices rememberMeServices;
 	
 	@Autowired
 	RestAccessDeniedHandler accessDeniedHandler;
@@ -68,6 +72,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.and()
 				.rememberMe()
 					.rememberMeServices(rememberMeServices)
+					.key(REMEMBER_ME_KEY)
+					.and()
 				.addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class).csrf()
 				.csrfTokenRepository(csrfTokenRepository());
 		;
