@@ -1,5 +1,5 @@
 angular
-	.module('hello', [ 'ngRoute' ])
+	.module('FomoApllication', [ 'ngRoute' ])
 		.config(
 				function($routeProvider, $httpProvider) {
 

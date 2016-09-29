@@ -1,10 +1,10 @@
 package com.fomo.application.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.fomo.application.entity.Token;
  
 
-public interface TokenRepository extends JpaRepository<Token, String>{
+public interface TokenRepository extends CrudRepository<Token, String>{
 
 }

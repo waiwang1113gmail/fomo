@@ -39,7 +39,7 @@ public class Controller {
 
 	@RequestMapping("/security/account")
 	User getUserAccount() {
-		User user = userRepo.findByLogin(SecurityUtils.getCurrentLogin());
+		User user = userRepo.findByEmail(SecurityUtils.getCurrentLogin());
 		return user;
 	}
 	

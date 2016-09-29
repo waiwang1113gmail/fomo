@@ -102,7 +102,7 @@ public class RememberMeServices extends
         String login = successfulAuthentication.getName();
 
         log.debug("Creating new persistent login for user {}", login);
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findByEmail(login);
         Token token = new Token();
         token.setSeries(generateSeriesData());
         token.setUserLogin(user.getEmail());
