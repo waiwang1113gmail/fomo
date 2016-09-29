@@ -14,19 +14,5 @@ import com.fomo.application.entity.User;
 public class UserManager {
 	@Autowired
 	JdbcTemplate databaseTemplate;
-	
-	public User findByLogin(String username){
-		User u=databaseTemplate.queryForObject("SELECT Firstname,LastName,Email FROM USER,USER_DETAIL,USER_ROLES WHERE Email = ?",new Object[]{username}, new RowMapper<User>(){
-			@Override
-			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User u=new User();
-				u.setFirstName(rs.getString("Firstname"));
-				u.setLastName(rs.getString("LastName"));
-				u.setEmail(rs.getString("Email"));
-				return u;
-			}
-			
-		} );
-		return u;
-	}
+	 
 }

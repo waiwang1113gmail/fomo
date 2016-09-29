@@ -1,7 +1,9 @@
-angular
-	.module('FomoApllication', [ 'ngRoute' ])
+
+var fomoApp = angular
+    .module('FomoApllication', ['ngRoute', 'FomoSecurity','FomoControllers']);
+fomoApp
 		.config(
-				function($routeProvider, $httpProvider) {
+				function($routeProvider, $httpProvider,USER_ROLES) {
 
 					$routeProvider.when('/', {
 						templateUrl : 'views/home.html',
@@ -19,7 +21,7 @@ angular
 						redirectTo : '/error/404'
 					});
 					$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-				}).run(function($rootScope, AuthSharedService, USER_ROLES){
+				}).run(function($rootScope, AuthSharedService, USER_ROLES,$location,Session){
 					$rootScope.$on('$routeChangeStart',function(event,next){
 						if(next.originalPath=="/login" && $rootScope.authenticated){
 							event.preventDefault();

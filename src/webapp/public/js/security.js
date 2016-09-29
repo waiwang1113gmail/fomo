@@ -1,5 +1,5 @@
 var fomoApp = angular
-    .module('FomoApllication', ['ngResource', 'ngRoute', 'http-auth-interceptor']);
+    .module('FomoSecurity', ['ngResource', 'ngRoute', 'http-auth-interceptor']);
 
 fomoApp.service('Session',function(){
 	this.loginUser = function(userData){
