@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fomo.application.database.UserManager;
 import com.fomo.application.entity.User;
 import com.fomo.application.repository.UserRepository;
 

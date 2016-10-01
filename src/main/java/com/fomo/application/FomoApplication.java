@@ -13,9 +13,9 @@ public class FomoApplication {
 		String[] beanNames = ctx.getBeanDefinitionNames();
 		Arrays.sort(beanNames);
 		for (String beanName : beanNames) {
-			if(beanName.equalsIgnoreCase("UserDetailsService")){
+			if(beanName.equalsIgnoreCase("entityManagerFactory")){
 				Object ben=ctx.getBean(beanName);
-				System.out.println(ctx);
+				System.out.println(ben);
 			}
 		}
 	}

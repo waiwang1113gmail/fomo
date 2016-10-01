@@ -3,12 +3,12 @@ var fomoApp = angular
 
 fomoApp.service('Session',function(){
 	this.loginUser = function(userData){
-		this.id=data.id;
-		this.login=data.email;
-		this.firstName=data.firstName;
-		this.lastName=data.lastName;
+		this.id=userData.id;
+		this.login=userData.email;
+		this.firstName=userData.firstName;
+		this.lastName=userData.lastName;
 		this.userRoles = [];
-		angular.forEach(data.authorities,function(value, key){
+		angular.forEach(userData.authorities,function(value, key){
 			this.psuh(value.name);
 		},this.userRoles);
 	}
@@ -38,7 +38,7 @@ fomoApp.service('Session',function(){
 				params:{
 					username:username,
 					password:password,
-					rememberme: rememberMe
+					rememberme: true
 				},
 				ignoreAuthModule:'ignoreAuthModule'
 			};
@@ -50,15 +50,15 @@ fomoApp.service('Session',function(){
 					Session.invalidate();
 				});
 		},
-		isAuthroized:function(authroizedRoles){
-			if(!angular.isArray(authroizedRoles)){
-				if(authroizedRoles === '*'){
+		isAuthorized:function(authorizedRoles){
+			if(!angular.isArray(authorizedRoles)){
+				if(authorizedRoles === '*'){
 					return true;
 				}
 			}
 			var isAuthorized = false;
-			angular.forEach(authroizedRoles, function(authroizedRole){
-				var authroized = (!!Session.login && Session.userRoles.indexOf(authroizedRole) !== -1);
+			angular.forEach(authorizedRoles, function(authorizedRole){
+				var authorized = (!!Session.login && Session.userRoles.indexOf(authorizedRole) !== -1);
 				if(authorized || authorizedRole == '*'){
 					isAuthorized = true;
 				}

@@ -5,7 +5,7 @@ fomoApp
 		.config(
 				function($routeProvider, $httpProvider,USER_ROLES) {
 
-					$routeProvider.when('/', {
+					$routeProvider.when('/home', {
 						templateUrl : 'views/home.html',
 						controller : 'home',
 						controllerAs : 'controller',
@@ -17,11 +17,14 @@ fomoApp
 						templateUrl : 'views/login.html',
 						controller : 'LoginController',
 						controllerAs : 'controller'
-					}).otherwise({
+					}).when('/error/404',{
+						templateUrl : 'error/404.html'
+					})
+					.otherwise({
 						redirectTo : '/error/404'
 					});
 					$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-				}).run(function($rootScope, AuthSharedService, USER_ROLES,$location,Session){
+				}).run(function($rootScope, AuthSharedService, USER_ROLES,$location,Session,$timeout,$location){
 					$rootScope.$on('$routeChangeStart',function(event,next){
 						if(next.originalPath=="/login" && $rootScope.authenticated){
 							event.preventDefault();
@@ -43,7 +46,7 @@ fomoApp
 							Session.loginUser(data);
 							$rootScope.account= Session;
 							$rootScope.authenticated = true;
-							$localtion.path(nextLocation).replace();
+							$location.path(nextLocation).replace();
 						},delay);
 					});
 					$rootScope.$on('event:auth-loginRequired',function(event, data){
